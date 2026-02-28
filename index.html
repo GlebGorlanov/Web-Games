@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Web Games</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #222;
+    color: #fff;
+    padding: 50px;
+  }
+  h1 {
+    margin-bottom: 40px;
+    font-size: 48px;
+  }
+  .game-card {
+    display: inline-block;
+    width: 250px;
+    margin: 20px;
+    padding: 20px;
+    background: #333;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s, background 0.3s;
+  }
+  .game-card:hover {
+    transform: translateY(-5px);
+    background: #444;
+  }
+  .game-card h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .game-card p {
+    font-size: 16px;
+    color: #ccc;
+    min-height: 60px;
+  }
+  .game-card a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #f0a500;
+    color: #000;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .game-card a:hover {
+    background: #ffdc73;
+  }
+</style>
+</head>
+<body>
+
+<h1>🎮 Web Games</h1>
+
+<div class="game-card">
+  <h2>🧱 Arkanoid</h2>
+  <p>Классическая игра с мячиком, платформой и кирпичиками. Управляйте платформой мышью, уничтожайте все кирпичи и переходите на следующий уровень.</p>
+  <a href="arkanoid/index.html" target="_blank">Играть</a>
+</div>
+
+<div class="game-card">
+  <h2>🔢 Fifteen Puzzle</h2>
+  <p>Головоломка «Пятнашки». Перемещайте числа, чтобы собрать последовательность от 1 до 9. Отлично тренирует логику и внимательность.</p>
+  <a href="fifteen/index.html" target="_blank">Играть</a>
+</div>
+
+</body>
+</html>
