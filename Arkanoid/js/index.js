@@ -423,35 +423,35 @@ let vol = 50; // Переменная громкости звука.
 
 function brickCrash() {
   let audio = new Audio();
-  audio.src = "../sounds/brick.mp3";
+  audio.src = "sounds/brick.mp3";
   audio.autoplay = true;
   audio.volume = (vol / 100);
 };
 
 function hitRocket() {
   let audio = new Audio();
-  audio.src = "../sounds/hitRocket.mp3";
+  audio.src = "sounds/hitRocket.mp3";
   audio.autoplay = true;
   audio.volume = (vol / 100);
 };
 
 function hitWall() {
   let audio = new Audio();
-  audio.src = "../sounds/hitWall.mp3";
+  audio.src = "sounds/hitWall.mp3";
   audio.autoplay = true;
   audio.volume = (vol / 100);
 };
 
 function fellWater() {
   let audio = new Audio();
-  audio.src = "../sounds/fellWater.mp3";
+  audio.src = "sounds/fellWater.mp3";
   audio.autoplay = true;
   audio.volume = (vol / 100);
 };
 
 function clickButton() {
   let audio = new Audio();
-  audio.src = "../sounds/startGame.mp3";
+  audio.src = "sounds/startGame.mp3";
   audio.autoplay = true;
   audio.volume = (vol / 100);
 };
