@@ -4,7 +4,6 @@
 /*-------------------------------- Флаги -----------------------------------------------*/
 
 let isGameStarted = false; // Флаг: Состояние игры.
-//let isNextLevel = false; // Флаг: Переход на следующий уровень.
 let isBallActive = true; // Флаг: Состояние Мячика.
 
 /*------------------------- Кнопка Старта Игры --------------------------------*/
@@ -146,6 +145,7 @@ function resetGame() { // Возвращает игру в начальное с
   brickOffsetTop = 50;  // Расстояние от верхнего края.
 
   brickColor = 'rgba(213, 68, 0, 0.6)'; // Цвет кирпичика.
+  colorParticles = 'rgb(213, 68, 0)'; // Цвет частиц.
 
   initBricks(); // Восстанавливаем кирпичики.
 
@@ -167,25 +167,24 @@ let paddleY = canvas.height - 20; // На 20px выше нижнего края(
 
 // Функция отрисовки платформы(каждый кадр).
 function drawPaddle() {
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'; // Тень платформы.
+  ctx.save();
+
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
   ctx.shadowBlur = 2;
   ctx.shadowOffsetX = 1;
   ctx.shadowOffsetY = -1;
 
-  ctx.beginPath(); // Рисуем платформу.
+  ctx.beginPath();
   ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
   ctx.fillStyle = 'rgba(191, 172, 0, 0.8)';
   ctx.fill();
   ctx.closePath();
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 1)'; // Контур платформы.
+  ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  ctx.shadowColor = 'transparent'; // Сброс тени(что бы не применялась к другим объектам).
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
+  ctx.restore();
 };
 
 // Управление платформы мышью.
@@ -204,7 +203,7 @@ canvas.addEventListener('mousemove', (e) => {
 /*------------------------------------- Кирпичики -------------------------*/
 
 let brickRowCount = 4; // Ряды кирпичиков.
-let brickColumnCount = 5; // Столбцы кирпичиков.
+let brickColumnCount = 5; // Колонки кирпичиков.
 
 let brickWidth = 80;   // Ширина кирпичика.
 let brickHeight = 25; // Высота кирпичика.
@@ -215,22 +214,22 @@ let brickOffsetLeft; // Расстояние от левого края.
 
 let brickColor = 'rgba(213, 68, 0, 0.6)'; // Цвет кирпичика.
 
-let bricks = [];  // Массив кирпичиков.
-let bricksLeft = brickRowCount * brickColumnCount;  // Подсчет оставшихся кирпичей.
+let bricks = [];  // Массив кирпичиков(двухмерный).
+let bricksLeft = brickRowCount * brickColumnCount;  // Подсчет оставшихся кирпичиков.
 
 // Функция обновления массива кирпичиков.
 function initBricks() {
-  bricks = [];
+  bricks = []; // Очищаем массив кирпичиков.
 
-  for (let i = 0; i < brickColumnCount; i++) {
-    bricks[i] = [];
+  for (let i = 0; i < brickColumnCount; i++) { // Проходим по колонкам.
+    bricks[i] = []; // Создаем вложенный массив.
 
-    for (let j = 0; j < brickRowCount; j++) {
-      bricks[i][j] = { x: 0, y: 0, status: 1 };
+    for (let j = 0; j < brickRowCount; j++) { // Проходим по рядам.
+      bricks[i][j] = { x: 0, y: 0, status: 1 }; // Создаем объект кирпичиков.
     };
   };
 
-  bricksLeft = brickRowCount * brickColumnCount;
+  bricksLeft = brickRowCount * brickColumnCount; // Снова считаем кирпичики.
 };
 
 let particles = []; // Массив частиц(разрушение кирпичика).
@@ -238,15 +237,17 @@ initBricks(); // Функция обновления массива кирпич
 
 // Функция создания кирпичиков.
 function drawBricks() {
-  const totalWidth = brickColumnCount * brickWidth + (brickColumnCount - 1) * brickPadding;
-  brickOffsetLeft = (canvas.width - totalWidth) / 2;
+  const totalWidth = brickColumnCount * brickWidth + (brickColumnCount - 1) * brickPadding;  // Общая ширина всех кирпичиков.
+  brickOffsetLeft = (canvas.width - totalWidth) / 2;  // Центрируем кирпичики по горизонтали.
 
-  for (let i = 0; i < brickColumnCount; i++) {
+  for (let i = 0; i < brickColumnCount; i++) {  // Проходимся по кирпичикам.
     for (let j = 0; j < brickRowCount; j++) {
-      if (bricks[i][j].status === 1) {
-        const brickX = i * (brickWidth + brickPadding) + brickOffsetLeft;
-        const brickY = j * (brickHeight + brickPadding) + brickOffsetTop;
+      if (bricks[i][j].status === 1) {  // Проверяем цел ли кирпичик.
+        // Вычисление координат кирпичиков.
+        const brickX = i * (brickWidth + brickPadding) + brickOffsetLeft;  // Чем больше i, тем правее кирпичик.
+        const brickY = j * (brickHeight + brickPadding) + brickOffsetTop;  // Чем больше j, тем ниже кирпичик.
 
+        // Записываем координаты в объект кирпича.
         bricks[i][j].x = brickX;
         bricks[i][j].y = brickY;
 
@@ -277,33 +278,37 @@ function updateLevel() {  // Функция обновления уровня и
   const levelOutput = document.querySelector('.level output');  // Получаем уровень по селектору.
   levelOutput.textContent = level;
 
-  const levelFone = document.querySelector('.level');
-  levelFone.style.backgroundColor = 'rgba(220, 187, 0, 0.4)';
+  const levelColor = document.querySelector('.level');
+  levelColor.style.borderColor = 'rgba(255, 128, 0, 0.6)';
+  levelColor.style.color = 'rgba(255, 128, 0, 0.8)';
 
   setTimeout(() => {
-    levelFone.style.backgroundColor = 'rgba(185, 185, 185, 0.1)';
+    levelColor.style.borderColor = 'rgba(245, 245, 245, 0.4)';
+    levelColor.style.color = 'rgba(255, 255, 255, 0.6)';
   }, 1000);
 };
 
 // Функция игровой логики(Пересечение мячика с кирпичиком).
+let colorParticles = 'rgb(213, 68, 0)'; // Переменна цвета цастиц.
+
 function collisionDetection() { 
   for (let i = 0; i < brickColumnCount; i++) {
     for (let j = 0; j < brickRowCount; j++) {
-      const b = bricks[i][j];
+      const b = bricks[i][j];  // Получаем каждый кирпичик.
 
-      if (b.status === 1) {
+      if (b.status === 1) {  // Проверяем цел ли кирпичик.
         if (
-          x + ballSize > b.x &&
-          x - ballSize < b.x + brickWidth &&
-          y + ballSize > b.y &&
-          y - ballSize < b.y + brickHeight
+          x + ballSize > b.x && // Правая сторона мяча зашла в кирпич.
+          x - ballSize < b.x + brickWidth && // Левая сторона мяча не вышла за кирпич.
+          y + ballSize > b.y && // Нижняя часть мяча зашла в кирпич.
+          y - ballSize < b.y + brickHeight // Верхняя часть мяча не выше кирпича.
         ) {
           dy = -dy; // Скорость мячика.
-          b.status = 0;
-          bricksLeft--;
+          b.status = 0; // Разбитый кирпичик.
+          bricksLeft--; // Уменьшаем счетчик кирпичей.
 
           // Функция частиц.
-          createParticles(b.x + brickWidth / 2, b.y + brickHeight / 2, 'rgba(213, 68, 0, 0.6)');
+          createParticles(b.x + brickWidth / 2, b.y + brickHeight / 2, colorParticles);
 
           score += 10;
           updateScore();
@@ -328,6 +333,7 @@ function nextLevel() {  // Функция проверки уровня игры
     brickRowCount = 7; // Меняем количество рядов кирпичиков.
     brickPadding = 8; // Меняем расстояние между кирпичиками.
     brickColor = 'rgba(31, 133, 0, 0.7)'; // Меняем цвет кирпичика.
+    colorParticles = 'rgb(31, 133, 0)'; // Меняем цвет часитиц.
     initBricks(); // Функция обновления массива кирпичиков.
     // Сохраняем score и level, восстанавливаем только кирпичи и мяч.
     bricksLeft = brickRowCount * brickColumnCount;
@@ -348,12 +354,12 @@ function nextLevel() {  // Функция проверки уровня игры
 
     isBallActive = true; // Состояние мячика.
     isGameStarted = true;  // Состояние игры.
-    //isNextLevel = true; // Состояние уровня.
   } else if(level === 3) {  // Игра пройдена полностью.
     brickColumnCount = 9; // Меняем количество колонок кирпичиков.
     brickRowCount = 8; // Меняем количество рядов кирпичиков.
     brickPadding = 4; // Меняем расстояние между кирпичиками.
     brickColor = 'rgba(255, 30, 124, 0.6)'; // Меняем цвет кирпичика.
+    colorParticles = 'rgb(255, 30, 124)'; // Меняем цвет частиц.
     initBricks(); // Функция обновления массива кирпичиков.
     // Сохраняем score и level, восстанавливаем только кирпичи и мяч.
     bricksLeft = brickRowCount * brickColumnCount;
@@ -374,7 +380,6 @@ function nextLevel() {  // Функция проверки уровня игры
 
     isBallActive = true; // Состояние мячика.
     isGameStarted = true;  // Состояние игры.
-    isNextLevel = true; // Состояние уровня.
   } else if(level > 3) {
     resetGame(); // Функция сброса игры.
 
@@ -386,33 +391,35 @@ function nextLevel() {  // Функция проверки уровня игры
   };
 };
 
+// Функция создания частиц кирпичика.
 function createParticles(x, y, color) {
-  for (let i = 0; i < 10; i++) {
-    particles.push({
-      x: x,
+  for (let i = 0; i < 20; i++) { // Цикл создания частиц.
+    particles.push({  // Добавляем объект в массив particles.
+      x: x, // Точка появления частиц.
       y: y,
-      dx: (Math.random() - 0.5) * 6,
-      dy: (Math.random() - 0.5) * 6,
-      size: Math.random() * 4 + 2,
-      life: 30,
-      color: color
+
+      dx: (Math.random() - 0.5) * 6, // Скорость по Х.
+      dy: (Math.random() - 0.5) * 6,  // Скорость по Y.
+      size: Math.random() * 5 + 2, // Размер частиц.
+      life: 30, // Жизнь частици.
+      color: color // Цвет частиц.
     });
   };
 };
 
-function drawParticles() {
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
+function drawParticles() { // Рисуем - Удаляем частици.
+  for (let i = particles.length - 1; i >= 0; i--) { // Обратный цикл.
+    const p = particles[i]; // Текущая частица.
 
-    ctx.fillStyle = `rgba(213, 68, 0, ${p.life / 30})`;
-    ctx.fillRect(p.x, p.y, p.size, p.size);
+    ctx.fillStyle = `rgba(${p.color}, ${p.life / 30})`; // Цвет и прзрачность частици.
+    ctx.fillRect(p.x, p.y, p.size, p.size); // Позиция и размер частици.
 
-    p.x += p.dx;
-    p.y += p.dy;
-    p.dy += 0.1;
-    p.life--;
+    p.x += p.dx; // Добавляем скорость к позиции.
+    p.y += p.dy; // Движение по Y.
+    p.dy += 0.1; // Увеличиваем скорость вниз.
+    p.life--; // Уменьшаем жизнь.
 
-    if (p.life <= 0) {
+    if (p.life <= 0) { // Удаление частиц.
       particles.splice(i, 1);
     };
   };
