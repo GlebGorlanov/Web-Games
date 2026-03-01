@@ -19,6 +19,7 @@ body {
     width: 600px;
     height: 600px;
     background-color: rgba(107, 174, 228, 0.5);
+    backdrop-filter: blur(3px);
     margin: auto;
     margin-top: 30px;
 }
@@ -27,6 +28,7 @@ body {
     cursor: pointer;
     color: rgb(187, 216, 243);
     background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
     border-radius: 30px;
     font-size: 45px;
     width: 197px;
@@ -44,7 +46,8 @@ body {
     height: 240px;
     border: 1px solid rgba(245, 245, 245, 0.5);
     border-radius: 30px;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
     color: whitesmoke;
     font-size: 40px;
     text-align: center;
